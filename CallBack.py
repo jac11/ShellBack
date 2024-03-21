@@ -16,7 +16,6 @@ hostname = socket.gethostname()
 IPaddress = socket.gethostbyname(hostname)
 Port = int(6655)
 Stopthread = 0
-KeyWord = ["'stream'" ,"'screenshot'" ,"'quit'","'cd'","'getfile'"]
 class CallMeBack:
     def __init__(self):
         global Stopthread
