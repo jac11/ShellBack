@@ -4,7 +4,16 @@
  * This Python script is designed to provide remote access to a target machine.
  * It allows for various functionalities such as executing commands, taking screenshots, streaming the screen, uploading and downloading files, and more.
    Usage
-
+## requirements & Compile Python To EXE
+-------------------------------------------------------------------------------- 
+   * Install all Packages from requirements.txt in Windows machine 
+   ```
+    pip install -r requirements.txt
+   ```
+  * Use pyinstaller in compile the ShellBack.py to ShellBacl.exe
+  ```
+  pyinstaller -w -F ShellBack.py
+  ```
 ## Setting up the Listener
 ------------------------------------------------------------------------------
    * Before using the script, you need to set up a listener on your machine.
@@ -32,13 +41,7 @@
   *  Screen Capture: Take screenshots of the target machine's screen.
   *  Screen Streaming: Stream the target machine's screen to the listener.
   *  Error Handling: Basic error handling is implemented to handle certain scenarios.
-## Install to exe
--------------------------------------------------------------------------------- 
-  * Install all reqired Packages from requiremaint.txt in Windows machine 
-    ```
-        pip install -r requiremaint.txt
-    ```
-  * Use pyinstaller in compile the ShellBack.py to ShellBacl.exe
+
 
 ## Disclaimer
 ---------------------------------------------------------------------------------------------------
