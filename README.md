@@ -18,7 +18,7 @@
 ------------------------------------------------------------------------------
    * Before using the script, you need to set up a listener on your machine.
    * Use stage.py as the listener and set the port number in shellBack.py to the same port number in stage.py to establish the connection.
-   *you can use  netcat listener tool on the specified IP address and port (LHOST and LPORT variables).
+   * you can use  netcat listener tool on the specified IP address and port (LHOST and LPORT variables).
 
 ## Running the Script
 --------------------------------------------------------------------------------
