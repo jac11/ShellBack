@@ -10,7 +10,7 @@
    ```
     pip install -r requirements.txt
    ```
-  * Use pyinstaller in compile the CallBack.py to CallBacl.exe
+  * Use pyinstaller in compile the CallBack.py to CallBack.exe
   ```
   pyinstaller -w -F CallBack.py
   ```
