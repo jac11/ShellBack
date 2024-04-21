@@ -10,14 +10,14 @@
    ```
     pip install -r requirements.txt
    ```
-  * Use pyinstaller in compile the ShellBack.py to ShellBacl.exe
+  * Use pyinstaller in compile the CallBack.py to CallBacl.exe
   ```
-  pyinstaller -w -F ShellBack.py
+  pyinstaller -w -F CallBack.py
   ```
 ## Setting up the Listener
 ------------------------------------------------------------------------------
    * Before using the script, you need to set up a listener on your machine.
-   * Use stage.py as the listener and set the port number in shellBack.py to the same port number in stage.py to establish the connection.
+   * Use stage.py as the listener and set the port number in CallBack.py to the same port number in stage.py to establish the connection.
    * you can use  netcat listener tool on the specified IP address and port (LHOST and LPORT variables).
 
 ## Running the Script
