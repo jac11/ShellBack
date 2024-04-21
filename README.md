@@ -22,7 +22,7 @@
   * Use commands like screenshot, stream, cd, quit, etc., to perform various actions on the target machine.
     ### *  Additional Notes
     ---------------------------------------------------------------------------------------------
-       *   The script provides basic error handling, but use it at your own risk.
+       *  The script provides basic error handling, but use it at your own risk.
        *  Make sure you have appropriate permissions before running the script on any machine.
 
 ## Functionality
@@ -32,6 +32,13 @@
   *  Screen Capture: Take screenshots of the target machine's screen.
   *  Screen Streaming: Stream the target machine's screen to the listener.
   *  Error Handling: Basic error handling is implemented to handle certain scenarios.
+## Install to exe
+-------------------------------------------------------------------------------- 
+  * Install all reqired Packages from requiremaint.txt in Windows machine 
+    ```
+        pip install -r requiremaint.txt
+    ```
+  * Use pyinstaller in compile the ShellBack.py to ShellBacl.exe
 
 ## Disclaimer
 ---------------------------------------------------------------------------------------------------
