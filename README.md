@@ -22,7 +22,6 @@
 
 ## Running the Script
 --------------------------------------------------------------------------------
-  * Ensure you have Python 3 installed on the target machine.
   * Modify the LHOST and LPORT variables in the script to match the IP address and port of your listener.
 
 ## Interacting with the Target
